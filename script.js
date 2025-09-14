@@ -101,9 +101,6 @@ class BiometricMonitor {
   }
 
   initEventListeners() {
-    document.getElementById('videoInput').addEventListener('change', (e) => {
-      this.handleVideoUpload(e.target.files[0]);
-    });
     document.getElementById('startBtn').addEventListener('click', () => {
       this.startMonitoring();
     });
@@ -141,35 +138,6 @@ class BiometricMonitor {
     }
   }
 
-  handleVideoUpload(file) {
-    if (!file) return;
-    if (!file.type.startsWith('video/')) {
-      alert('動画ファイルを選択してください。');
-      return;
-    }
-    this.loadVideo(file);
-  }
-
-  loadVideo(file) {
-    const videoContainer = document.getElementById('videoContainer');
-    const existingVideo = videoContainer.querySelector('video');
-    if (existingVideo) {
-      URL.revokeObjectURL(existingVideo.src);
-      existingVideo.remove();
-    }
-    const video = document.createElement('video');
-    video.controls = true;
-    video.src = URL.createObjectURL(file);
-    video.preload = 'metadata';
-    video.addEventListener('error', (e) => {
-      alert('動画の読み込みに失敗しました。');
-    });
-    video.addEventListener('loadedmetadata', () => {
-      // 動画情報のログなど
-    });
-    videoContainer.innerHTML = '';
-    videoContainer.appendChild(video);
-  }
 
   generateBiometricData() {
     const currentTime = Date.now();
