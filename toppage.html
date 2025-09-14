@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>起床タイマー UI</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans JP', sans-serif;
+      background: linear-gradient(135deg, #7b2ff7, #00c6ff);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      color: #222;
+    }
+
+    /* サイドバー */
+    .sidebar {
+      width: 200px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .sidebar h1 {
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .menu {
+      flex: 1;
+    }
+    .menu-item {
+      margin: 14px 0;
+      font-size: 14px;
+      color: #888;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .menu-item img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+    .menu-item.active {
+      color: #2563eb;
+      font-weight: 600;
+    }
+    .logout {
+      margin-top: auto;
+      font-size: 13px;
+      color: #666;
+      cursor: pointer;
+    }
+
+    /* メインカード */
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      background: #f5f5f7;
+      border-radius: 28px;
+      width: 100%;
+      max-width: 960px;
+      height: 90%;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* 左側コントロール */
+    .controls {
+      flex: 2;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .upload-time {
+      display: flex;
+      gap: 20px;
+    }
+    .upload-box, .time-box {
+      flex: 1;
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .upload-box input { display: none; }
+    .upload-box label {
+      cursor: pointer;
+      color: #666;
+      font-size: 14px;
+    }
+    .upload-box img {
+      max-width: 100%;
+      max-height: 120px;
+      object-fit: cover;
+      display: none;
+      border-radius: 8px;
+    }
+    .time-box .time {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* タイマー入力 */
+    .time-input {
+      margin-top: 10px;
+    }
+    .time-input input {
+      appearance: none;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 16px;
+    }
+    .status {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    /* スタートボタン */
+    .start-btn {
+      margin-top: auto;
+      padding: 14px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* 右側ユーザーリスト */
+    .users {
+      flex: 1;
+      background: #eceef1;
+      border-left: 1px solid #ddd;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .user img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #bbb;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+    .user-info {
+      font-size: 13px;
+    }
+    .user-info .name { font-weight: 600; }
+    .user-info .id { color: #777; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h1>このデバイスの<br>ゴとか名前</h1>
+    <nav class="menu">
+      <div class="menu-item active"><img src="dashboard.png" alt="dashboard">Dashboard</div>
+      <div class="menu-item"><img src="vital.png" alt="vital">Vital</div>
+      <div class="menu-item"><img src="chat.png" alt="chat">Chat</div>
+      <div class="menu-item"><img src="setting.png" alt="setting">Setting</div>
+    </nav>
+    <div class="logout">⇦ log out</div>
+  </aside>
+
+  <main class="main">
+    <div class="card">
+      <section class="controls">
+        <div class="upload-time">
+          <!-- 画像アップロード -->
+          <div class="upload-box">
+            <input id="fileInput" type="file" accept="image/*">
+            <label for="fileInput">📷 写真をアップロード</label>
+            <img id="preview" alt="プレビュー画像" />
+          </div>
+
+          <!-- タイマー -->
+          <div class="time-box">
+            <div>Good Morning time</div>
+            <div class="time">⏰</div>
+            <div class="time-input">
+              <input id="wakeTime" type="time">
+            </div>
+            <div class="status" id="status">まだタイマーはセットされていません。</div>
+          </div>
+        </div>
+
+        <button id="startBtn" class="start-btn">START</button>
+      </section>
+
+      <!-- ユーザーリスト -->
+      <aside class="users">
+        <h3>Online User</h3>
+        <div class="user">
+          <img>
+          <div class="status-dot"></div>
+          <div class="user-info">
+            <div class="name">天野励音</div>
+            <div class="id">@amano reo</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // --- アップロード処理 ---
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+
+    fileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('画像ファイルを選択してください');
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      preview.src = url;
+      preview.style.display = 'block';
+    });
+
+    // --- タイマー処理 ---
+    const wakeTimeInput = document.getElementById('wakeTime');
+    const startBtn = document.getElementById('startBtn');
+    const status = document.getElementById('status');
+    let alarmTimeout = null;
+
+    function formatTimeHM(d){
+      const h = String(d.getHours()).padStart(2,'0');
+      const m = String(d.getMinutes()).padStart(2,'0');
+      return `${h}:${m}`;
+    }
+
+    wakeTimeInput.addEventListener('input', ()=>{ status.textContent='まだスタートされていません。' });
+
+    startBtn.addEventListener('click', ()=>{
+      const timeValue = wakeTimeInput.value;
+      if(!timeValue){ alert('起きる時間を選んでください。'); return; }
+
+      const [hh, mm] = timeValue.split(':').map(x=>parseInt(x,10));
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(hh, mm, 0, 0);
+      if(target <= now){
+        target.setDate(target.getDate()+1);
+      }
+      const diff = target - now;
+
+      if(alarmTimeout) clearTimeout(alarmTimeout);
+      alarmTimeout = setTimeout(()=>{
+        try{
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine'; o.frequency.value = 880;
+          g.gain.value = 0.0025;
+          o.connect(g); g.connect(ctx.destination);
+          o.start();
+          setTimeout(()=>{o.stop(); ctx.close();},1500);
+        }catch(e){}
+        alert('設定した時間になりました！');
+        status.textContent = 'アラームが鳴りました。';
+        alarmTimeout = null;
+      }, diff);
+
+      status.textContent = `アラームセット済 — ${formatTimeHM(target)} に鳴ります（${Math.round(diff/60000)}分後）`;
+    });
+
+    // ページ離脱時に警告
+    window.addEventListener('beforeunload', e => {
+      if(alarmTimeout){ e.preventDefault(); e.returnValue = ''; }
+    });
+
+    // 現在時刻のリアルタイム表示
+    const timeDisplay = document.querySelector('.time-box .time');
+    setInterval(()=>{
+      const now = new Date();
+      timeDisplay.textContent = formatTimeHM(now);
+    }, 1000);
+  </script>
+</body>
+</html>
