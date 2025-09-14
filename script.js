@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
       friendTime: 3,        // 友達が来る時間（秒）
       friendName: "たろう", // 友達の名前
       bigInhaleTime: 3,     // 大きな吸気の時間（秒）
-      bigExhaleTime: 10     // 大きな呼気の時間（秒）
+      bigExhaleTime: 25     // 大きな呼気の時間（秒）
     };
 
     // 動画イベントハンドラーの設定

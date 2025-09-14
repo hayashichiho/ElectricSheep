@@ -188,6 +188,37 @@ video {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* 日時・場所・温度情報 */
+.date,
+.location,
+.temperature {
+  color: #2c3e50;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-align: center;
+  margin: 5px 0;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 8px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.date {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  color: #667eea;
+}
+
+.location {
+  color: #e74c3c;
+}
+
+.temperature {
+  color: #3498db;
+}
+
 /* ボタンの有効・無効状態 */
 .btn-disabled {
   opacity: 0.6;
@@ -275,6 +306,13 @@ video {
     width: 100%;
     padding: 15px;
   }
+
+  .date,
+  .location,
+  .temperature {
+    font-size: 1em;
+    padding: 6px 12px;
+  }
 }
 
 @media (max-width: 780px) {
@@ -310,6 +348,19 @@ video {
 
   .stat-value {
     font-size: 1.5em;
+
+    .date,
+    .location,
+    .temperature {
+      font-size: 0.95em;
+      padding: 5px 10px;
+    }
+
+    .info-container {
+      flex-direction: column;
+      gap: 6px;
+      padding: 0 10px;
+    }
   }
 }
 
