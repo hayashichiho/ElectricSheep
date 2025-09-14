@@ -139,14 +139,16 @@ class BiometricMonitor {
           min: min,
           max: max,
           grid: { color: 'rgba(0, 0, 0, 0.1)' },
-          ticks: { color: '#666' }
+          ticks: { color: '#666' },
+          font: { size: 8 }
         },
         x: {
           grid: { color: 'rgba(0, 0, 0, 0.1)' },
-          ticks: { color: '#666' }
+          ticks: { color: '#666' },
+          font: { size: 8 },
         }
       },
-      animation: { duration: 200 }
+      animation: { duration: 100 }
     };
   }
 
@@ -339,10 +341,13 @@ class BiometricMonitor {
       const data = this.generateBiometricData();
       const timeLabel = this.getCurrentTimeString();
 
+      // video要素を取得
+      const video = document.getElementById('fixedVideo');
+
       // データ追加
       this.heartRateData.push(data.heartRate);
       this.breathingData.push(data.breathingRate);
-      this.timeLabels.push(timeLabel);
+      this.timeLabels.push(this.formatTime(video.currentTime));
 
       // 古いデータの削除
       if (this.heartRateData.length > this.MAX_DATA_POINTS) {
@@ -528,7 +533,6 @@ function startCountdown(targetDate) {
  */
 function setupVideoHandlers(monitor, config) {
   const video = document.getElementById('fixedVideo');
-  const messageElem = document.getElementById('friend-message');
 
   if (!video) {
     console.warn('動画要素が見つかりません');
@@ -573,15 +577,6 @@ function setupVideoHandlers(monitor, config) {
     const currentTime = video.currentTime;
     monitor.updateVideoState(video);
 
-    // 友達メッセージ表示
-    if (!state.messageShown && currentTime >= config.friendTime) {
-      if (messageElem) {
-        messageElem.textContent = `${config.friendName}が遊びに来たよ`;
-        messageElem.classList.add('active');
-      }
-      console.log(`友達メッセージ表示 (${monitor.formatTime(currentTime)})`);
-      state.messageShown = true;
-    }
 
     // 大きな吸気トリガー
     if (!state.bigInhaleTriggered && currentTime >= config.bigInhaleTime) {
@@ -596,6 +591,35 @@ function setupVideoHandlers(monitor, config) {
     }
   });
 
+  function createNotification(title, message, timestamp = "今", iconUrl = null) {
+    const container = document.getElementById('notificationsContainer');
+    const notification = document.createElement('div');
+    notification.className = 'notification-container';
+
+    const iconHTML = iconUrl
+      ? `<img class="notification-icon" src="${iconUrl}" alt="icon">`
+      : `<div class="notification-icon"></div>`;
+
+    notification.innerHTML = `
+    ${iconHTML}
+    <div class="notification-body">
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+    </div>
+    <div class="notification-timestamp">${timestamp}</div>
+  `;
+    container.appendChild(notification);
+
+    // 5秒後に自動で消える
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-in forwards';
+      setTimeout(() => notification.remove(), 300);
+    }, 5000);
+  }
+
+  // 例：ページ表示時に1件通知
+  createNotification("ログイン通知", "お父さんがこの夢にログインしました。", "1分前", "father.png");
+
   // シーク時の状態リセット
   video.addEventListener('seeked', () => {
     const currentTime = video.currentTime;
@@ -603,14 +627,6 @@ function setupVideoHandlers(monitor, config) {
 
     monitor.updateVideoState(video);
 
-    // 状態リセット
-    if (currentTime < config.friendTime) {
-      if (messageElem) {
-        messageElem.textContent = '';
-        messageElem.classList.remove('active');
-      }
-      state.messageShown = false;
-    }
 
     if (currentTime < config.bigInhaleTime) {
       state.bigInhaleTriggered = false;
@@ -656,10 +672,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 設定
     const config = {
-      friendTime: 3,        // 友達が来る時間（秒）
-      friendName: "たろう", // 友達の名前
       bigInhaleTime: 3,     // 大きな吸気の時間（秒）
-      bigExhaleTime: 25     // 大きな呼気の時間（秒）
+      bigExhaleTime: 25,    // 大きな呼気の時間（秒）
+      dangerTime: 2,        // 危険時間（秒）
+      dangerDuration: 2   // 危険時間の持続時間（秒）
     };
 
     // 動画イベントハンドラーの設定
