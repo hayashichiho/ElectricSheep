@@ -206,9 +206,30 @@ video {
   color: white;
 }
 
+.btn-big-inhale {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+}
+
+.btn-big-exhale {
+  background: linear-gradient(45deg, #f39c12, #d35400);
+  color: white;
+}
+
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ボタンの有効・無効状態 */
+.btn-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.btn-enabled {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* レスポンシブデザイン */

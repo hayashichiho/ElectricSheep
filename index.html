@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>動画とバイオメトリクス監視</title>
+  <title>睡眠時の画面</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
@@ -12,34 +12,28 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>🎬 動画バイオメトリクス監視システム</h1>
+      <h1>睡眠時の画面</h1>
       <p>動画を見ながらリアルタイムで生体データを監視</p>
     </div>
-
     <div class="main-content">
       <div class="video-section">
         <div class="video-container" id="videoContainer">
-          <div class="video-placeholder">
-            📹 動画を選択してください
-          </div>
+          <div class="video-placeholder">動画を選択してください</div>
         </div>
         <div class="file-input-container">
           <input type="file" id="videoInput" class="file-input" accept="video/*">
           <label for="videoInput" class="file-label">動画を選択</label>
         </div>
       </div>
-
       <div class="charts-section">
         <div class="chart-container">
-          <div class="chart-title heart-rate-title">❤️ 心拍数 (BPM)</div>
+          <div class="chart-title heart-rate-title">心拍数 (BPM)</div>
           <canvas id="heartRateChart"></canvas>
         </div>
-
         <div class="chart-container">
-          <div class="chart-title breathing-rate-title">🫁 呼吸数 (RPM)</div>
+          <div class="chart-title breathing-rate-title">呼吸数 (RPM)</div>
           <canvas id="breathingChart"></canvas>
         </div>
-
         <div class="stats-container">
           <div class="stat">
             <div class="stat-value heart-rate-value" id="currentHeartRate">72</div>
@@ -50,15 +44,15 @@
             <div class="stat-label">現在の呼吸数</div>
           </div>
         </div>
-
         <div class="controls">
-          <button class="btn btn-start" id="startBtn">監視開始</button>
-          <button class="btn btn-stop" id="stopBtn">監視停止</button>
+          <button class="btn btn-start btn-enabled" id="startBtn">監視開始</button>
+          <button class="btn btn-stop btn-disabled" id="stopBtn" disabled>監視停止</button>
+          <button class="btn btn-big-inhale btn-enabled" id="bigInhale">大きい吸気</button>
+          <button class="btn btn-big-exhale btn-enabled" id="bigExhale">大きい呼気</button>
         </div>
       </div>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 
