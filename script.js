@@ -318,13 +318,13 @@ class BiometricMonitor {
 
   /**
    * バイオメトリックデータの生成
-   * @returns {Object} 生成されたデータ
+   * @returns {Promise<Object>} 生成されたデータ
    */
-  generateBiometricData() {
+  async generateBiometricData() {
     const currentTime = Date.now();
     const videoTime = this.videoState.currentTime;
 
-    const heartRate = this.generateHeartRate(currentTime, videoTime);
+    const heartRate = await this.fetchHeartRate();
     const breathingRate = this.generateBreathingRate(currentTime, videoTime);
 
     return {
@@ -336,27 +336,29 @@ class BiometricMonitor {
   }
 
   /**
-   * 心拍数の生成（動画時間に連動）
-   * @param {number} currentTime - 現在時刻
-   * @param {number} videoTime - 動画時間
-   * @returns {number} 心拍数
+   * 外部APIから心拍数を取得
+   * @returns {Promise<number>} 心拍数
    */
-  generateHeartRate(currentTime, videoTime) {
-    const baseHeartRate = 72;
-    let heartRateVariation = 15;
-
-    // 動画時間に応じて心拍数の基準を調整
-    let videoInfluence = 0;
-    if (videoTime > 30) { // 30秒後から徐々に心拍数上昇（興奮）
-      videoInfluence = Math.min((videoTime - 30) / 60, 1) * 10; // 最大10BPM上昇
+  async fetchHeartRate() {
+    try {
+      const response = await fetch('http://172.20.10.10/');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('API返り値:', data);
+      
+      if (typeof data.pulse_rate_bpm !== 'number') {
+        throw new Error('Invalid pulse_rate_bpm format');
+      }
+      
+      return data.pulse_rate_bpm;
+    } catch (error) {
+      console.error('心拍数取得エラー:', error);
+      // エラー時はフォールバック値を使用
+      return 72;
     }
-
-    return Math.round(
-      baseHeartRate + videoInfluence +
-      Math.sin(currentTime / 5000) * heartRateVariation +
-      Math.sin(videoTime * 2) * 5 + // 動画時間に基づく変動
-      (Math.random() - 0.5) * 8
-    );
   }
 
   /**
@@ -444,9 +446,9 @@ class BiometricMonitor {
   /**
    * チャートの更新
    */
-  updateCharts() {
+  async updateCharts() {
     try {
-      const data = this.generateBiometricData();
+      const data = await this.generateBiometricData();
       const timeLabel = this.getCurrentTimeString();
 
       // video要素を取得
