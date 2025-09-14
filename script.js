@@ -276,6 +276,33 @@ function startCountdown(targetDate) {
 document.addEventListener('DOMContentLoaded', () => {
   window.biometricMonitor = new BiometricMonitor();
 
+  // カウントダウン
   const end = new Date(Date.now() + 10 * 60 * 1000);
   startCountdown(end);
+
+  // --- 友達が来る時間（秒） ---
+  const friendTime = 3; // 例: 3秒後
+  const friendName = "たろう"; // 例: たろう
+
+  const video = document.getElementById('fixedVideo');
+  const messageElem = document.getElementById('friend-message');
+  let messageShown = false;
+
+  if (video) {
+    video.addEventListener('timeupdate', () => {
+      if (!messageShown && video.currentTime >= friendTime) {
+        messageElem.textContent = `${friendName}が遊びに来たよ`;
+        messageElem.classList.add('active');
+        messageShown = true;
+      }
+    });
+    // 動画を巻き戻した場合はメッセージを消す
+    video.addEventListener('seeked', () => {
+      if (video.currentTime < friendTime) {
+        messageElem.textContent = '';
+        messageElem.classList.remove('active');
+        messageShown = false;
+      }
+    });
+  }
 });
