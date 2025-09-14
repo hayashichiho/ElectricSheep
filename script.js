@@ -15,6 +15,7 @@ class BiometricMonitor {
     this.bigExhaleActive = false;
     this.bigInhaleStep = 0;
     this.bigExhaleStep = 0;
+    this.bigBreathingStep = 2;
     this.graphMin = 0;
     this.graphMax = 30;
     this.inhaleMax = 28;
@@ -184,8 +185,8 @@ class BiometricMonitor {
     // bigInhale: inhaleMaxまで5ステップで徐々に上げる
     if (this.bigInhaleActive) {
       this.bigInhaleStep++;
-      breathingRate = 16 + Math.round((this.inhaleMax - 16) * (this.bigInhaleStep / 2));
-      if (this.bigInhaleStep >= 2) {
+      breathingRate = 16 + Math.round((this.inhaleMax - 16) * (this.bigInhaleStep / this.bigBreathingStep));
+      if (this.bigInhaleStep >= this.bigBreathingStep) {
         this.bigInhaleActive = false;
         this.bigInhaleStep = 0;
       }
@@ -193,8 +194,8 @@ class BiometricMonitor {
     // bigExhale: this.exhaleMinまで5ステップで徐々に下げる
     else if (this.bigExhaleActive) {
       this.bigExhaleStep++;
-      breathingRate = 16 - Math.round((16 - this.exhaleMin) * (this.bigExhaleStep / 2));
-      if (this.bigExhaleStep >= 2) {
+      breathingRate = 16 - Math.round((16 - this.exhaleMin) * (this.bigExhaleStep / this.bigBreathingStep));
+      if (this.bigExhaleStep >= this.bigBreathingStep) {
         this.bigExhaleActive = false;
         this.bigExhaleStep = 0;
       }
@@ -286,6 +287,27 @@ class BiometricMonitor {
   }
 }
 
+function startCountdown(targetDate) {
+  const timerElem = document.getElementById('countdown-timer');
+  function update() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) {
+      timerElem.textContent = 'カウントダウン終了';
+      clearInterval(intervalId);
+      return;
+    }
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    timerElem.textContent = `起きる時間まであと ${m}:${s}`;
+  }
+  update();
+  const intervalId = setInterval(update, 1000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   window.biometricMonitor = new BiometricMonitor();
+
+  const end = new Date(Date.now() + 10 * 60 * 1000);
+  startCountdown(end);
 });

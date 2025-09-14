@@ -232,6 +232,21 @@ video {
   pointer-events: auto;
 }
 
+/* カウントダウンタイマー */
+.countdown-timer {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 16px 28px;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  z-index: 1000;
+  letter-spacing: 0.1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
   .main-content {
