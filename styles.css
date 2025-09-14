@@ -384,6 +384,32 @@ video {
 }
 
 /* ==============================================
+  HP
+   ============================================== */
+
+.hearts-display {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.heart {
+  font-size: 50px;
+  transition: color 0.3s;
+}
+
+.heart-full {
+  color: #e74c3c;
+  /* 赤色 */
+}
+
+.heart-empty {
+  color: #000000;
+  /* 薄いグレーで輪郭っぽく */
+}
+
+/* ==============================================
    アニメーション
    ============================================== */
 @keyframes fadeInUp {

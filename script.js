@@ -1,6 +1,7 @@
 /**
- * バイオメトリック監視システム（動画連動版）
+ * バイオメトリック監視システム（動画連動版 + HP機能）
  * 動画の再生時間に完全連動して心拍数と呼吸数を監視・表示
+ * HP機能追加版
  */
 class BiometricMonitor {
   constructor() {
@@ -43,7 +44,111 @@ class BiometricMonitor {
       breathing: { min: 0, max: 30, inhaleMax: 28, exhaleMin: 5 }
     };
 
+    // ハートHP関連
+    this.maxHP = 80;
+    this.currentHP = 68; // 初期HP
+    this.hearts = [];
+
     this.init();
+  }
+
+  /**
+   * HP機能の初期化
+   */
+  initHeartHP() {
+    // ハートHPコンテナを作成
+    const heartsContainer = document.createElement('div');
+    heartsContainer.className = 'hearts-hp-container';
+    heartsContainer.innerHTML = `
+      <div class="hearts-display" id="heartsDisplay"></div>
+      </div>
+    `;
+
+    // チャートセクションの最初に挿入
+    const chartsSection = document.querySelector('.charts-section');
+    if (chartsSection) {
+      chartsSection.insertBefore(heartsContainer, chartsSection.firstChild);
+    }
+
+    // 8個のハートを作成
+    const heartsDisplay = document.getElementById('heartsDisplay');
+    for (let i = 0; i < 8; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = '♥';
+      heartsDisplay.appendChild(heart);
+      this.hearts.push(heart);
+    }
+
+    this.updateHeartDisplay();
+  }
+
+  /**
+   * ハート表示の更新
+   */
+  updateHeartDisplay() {
+    const totalHearts = 8;
+    const hpPerHeart = this.maxHP / totalHearts; // 各ハートが担当するHP (10ずつ)
+
+    this.hearts.forEach((heart, index) => {
+      heart.className = 'heart'; // リセット
+
+      // 各ハートの担当HP範囲を計算
+      const heartMinHP = index * hpPerHeart;
+      const heartMaxHP = (index + 1) * hpPerHeart;
+
+      // このハートのHP範囲内での充填度を計算
+      const heartHP = Math.min(this.currentHP - heartMinHP, hpPerHeart);
+      const heartPercentage = heartHP / hpPerHeart;
+
+      // 充填度に応じて色を決定
+      if (heartPercentage >= 1.0) {
+        heart.classList.add('heart-full');
+      } else {
+        heart.classList.add('heart-empty');
+      }
+    });
+
+    // HP テキストを更新
+    const hpElem = document.getElementById('currentHP');
+    if (hpElem) {
+      hpElem.textContent = Math.round(this.currentHP);
+    }
+  }
+
+  /**
+   * HPを更新するメソッド（心拍数に基づいて）
+   */
+  updateHP(heartRate) {
+    // 心拍数に基づいてHPを調整
+    if (heartRate >= 60 && heartRate <= 100) {
+      // 正常範囲：HPを少し回復
+      this.currentHP = Math.min(this.maxHP, this.currentHP + 0.5);
+    } else if (heartRate > 100) {
+      // 高い心拍数：HPを少し減少
+      this.currentHP = Math.max(0, this.currentHP - 0.3);
+    } else {
+      // 低い心拍数：HPを少し減少
+      this.currentHP = Math.max(0, this.currentHP - 0.2);
+    }
+
+    // ランダムな要素も追加（より動的に）
+    const randomChange = (Math.random() - 0.5) * 0.1;
+    this.currentHP = Math.max(0, Math.min(this.maxHP, this.currentHP + randomChange));
+
+    this.updateHeartDisplay();
+  }
+
+  /**
+   * HPを特定の値に設定するメソッド
+   * @param {number} newHP - 設定したい新しいHPの値
+   */
+  setHP(newHP) {
+    // HPが最大値を超えたり、0未満になったりしないようにclamp関数で制御
+    this.currentHP = this.clamp(newHP, 0, this.maxHP);
+    console.log(`HPが指定により ${this.currentHP} に設定されました。`);
+    // 表示を即座に更新
+    this.updateHeartDisplay();
   }
 
   /**
@@ -51,6 +156,9 @@ class BiometricMonitor {
    */
   init() {
     try {
+      // HP表示の初期化を先に行う
+      this.initHeartHP();
+
       this.initCharts();
       this.initEventListeners();
       this.updateStatusDisplay();
@@ -347,7 +455,7 @@ class BiometricMonitor {
       // データ追加
       this.heartRateData.push(data.heartRate);
       this.breathingData.push(data.breathingRate);
-      this.timeLabels.push(this.formatTime(video.currentTime));
+      this.timeLabels.push(this.formatTime(video ? video.currentTime : 0));
 
       // 古いデータの削除
       if (this.heartRateData.length > this.MAX_DATA_POINTS) {
@@ -362,6 +470,9 @@ class BiometricMonitor {
 
       this.updateCurrentValues(data);
       this.updateStatusDisplay();
+
+      // HPを更新
+      this.updateHP(data.heartRate);
     } catch (error) {
       console.error('チャート更新エラー:', error);
     }
@@ -542,7 +653,8 @@ function setupVideoHandlers(monitor, config) {
   let state = {
     messageShown: false,
     bigInhaleTriggered: false,
-    bigExhaleTriggered: false
+    bigExhaleTriggered: false,
+    nextHpEventIndex: 0 // 次に処理するHPイベントのインデックス
   };
 
   // 動画準備完了
@@ -577,6 +689,16 @@ function setupVideoHandlers(monitor, config) {
     const currentTime = video.currentTime;
     monitor.updateVideoState(video);
 
+    // HPイベントの処理ロジック
+    if (config.hpEvents && state.nextHpEventIndex < config.hpEvents.length) {
+      const nextEvent = config.hpEvents[state.nextHpEventIndex];
+
+      // イベントの指定時間を過ぎたらHPを更新
+      if (currentTime >= nextEvent.time) {
+        monitor.setHP(nextEvent.value);
+        state.nextHpEventIndex++; // 次のイベントへインデックスを進める
+      }
+    }
 
     // 大きな吸気トリガー
     if (!state.bigInhaleTriggered && currentTime >= config.bigInhaleTime) {
@@ -593,6 +715,8 @@ function setupVideoHandlers(monitor, config) {
 
   function createNotification(title, message, timestamp = "今", iconUrl = null) {
     const container = document.getElementById('notificationsContainer');
+    if (!container) return;
+
     const notification = document.createElement('div');
     notification.className = 'notification-container';
 
@@ -627,6 +751,26 @@ function setupVideoHandlers(monitor, config) {
 
     monitor.updateVideoState(video);
 
+    // シークに対応したHPの再設定ロジック
+    if (config.hpEvents) {
+      let lastApplicableHP = null;
+      let nextIndex = 0;
+      for (let i = 0; i < config.hpEvents.length; i++) {
+        const event = config.hpEvents[i];
+        if (currentTime >= event.time) {
+          lastApplicableHP = event.value;
+          nextIndex = i + 1;
+        } else {
+          break; // 配列は時間順なので、ここでループを抜ける
+        }
+      }
+      // 該当する過去のイベントがあればHPをその値に設定
+      if (lastApplicableHP !== null) {
+        monitor.setHP(lastApplicableHP);
+      }
+      // 次のイベントインデックスを更新
+      state.nextHpEventIndex = nextIndex;
+    }
 
     if (currentTime < config.bigInhaleTime) {
       state.bigInhaleTriggered = false;
@@ -675,13 +819,19 @@ document.addEventListener('DOMContentLoaded', () => {
       bigInhaleTime: 3,     // 大きな吸気の時間（秒）
       bigExhaleTime: 25,    // 大きな呼気の時間（秒）
       dangerTime: 2,        // 危険時間（秒）
-      dangerDuration: 2   // 危険時間の持続時間（秒）
+      dangerDuration: 2,    // 危険時間の持続時間（秒）
+      hpEvents: [
+        // ここを動画に合わせて変える
+        { time: 5, value: 40 },  // 5秒後にHPを40に
+        { time: 15, value: 60 }, // 15秒後にHPを60に回復
+        { time: 28, value: 30 }  // 28秒後にHPを30に
+      ]
     };
 
     // 動画イベントハンドラーの設定
     setupVideoHandlers(window.biometricMonitor, config);
 
-    console.log('動画連動バイオメトリックシステムの初期化が完了しました');
+    console.log('動画連動バイオメトリックシステム（HP機能付き）の初期化が完了しました');
 
     // 初期状態表示の更新
     setTimeout(() => {
