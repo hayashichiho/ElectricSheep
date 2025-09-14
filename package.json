@@ -1,0 +1,46 @@
+{
+  "name": "biometric-video-monitor",
+  "version": "1.0.0",
+  "description": "動画とバイオメトリクス（心拍数・呼吸数）のリアルタイム監視システム",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000 --open=/index.html",
+    "dev": "live-server --port=3000 --open=/index.html --watch=.",
+    "build": "echo 'ビルド処理はありません（純粋なクライアントサイドアプリ）'",
+    "serve": "python3 -m http.server 8000",
+    "serve-python": "python -m http.server 8000"
+  },
+  "keywords": [
+    "biometric",
+    "video",
+    "monitoring",
+    "heart-rate",
+    "breathing",
+    "real-time",
+    "chart",
+    "healthcare"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/biometric-video-monitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/biometric-video-monitor/issues"
+  },
+  "homepage": "https://github.com/yourusername/biometric-video-monitor#readme",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
