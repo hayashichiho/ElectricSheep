@@ -11,14 +11,15 @@
 
 <body>
   <div class="container">
-    <div class="header">
-      <h1>睡眠時の画面</h1>
-      <p>動画を見ながらリアルタイムで生体データを監視</p>
-    </div>
     <div class="info-container">
-      <p class="date">2035年9月14日</p>
-      <p class="location">名古屋</p>
-      <p class="temperature">27度</p>
+      <p class="year">2055</p>
+      <p class="date">9/15</p>
+      <p class="location">名古屋 中区</p>
+      <span class="dli-pin-fill"></span>
+      <p class="temperature">30</p>
+      <p class="temperatureSymbol">°C</p>"
+      <p class="maxTemperature">最高気温 31°</p>
+      <p class="minTemperature">最低気温 24°</p>
     </div>
     <div class="main-content">
       <div class="video-section">
@@ -30,11 +31,11 @@
 
       <div class="charts-section">
         <div id="friend-message" class="friend-message"></div>
-        <div class="chart-container">
+        <div class="chart-container heart-rate-chart-container">
           <div class="chart-title heart-rate-title">心拍数 (BPM)</div>
           <canvas id="heartRateChart"></canvas>
         </div>
-        <div class="chart-container">
+        <div class="chart-container breathing-chart-container">
           <div class="chart-title breathing-rate-title">呼吸数 (RPM)</div>
           <canvas id="breathingChart"></canvas>
         </div>
