@@ -401,12 +401,20 @@ video {
 
 .heart-full {
   color: #e74c3c;
-  /* 赤色 */
 }
 
 .heart-empty {
   color: #000000;
-  /* 薄いグレーで輪郭っぽく */
+}
+
+.hearts-hp-container {
+  position: fixed;
+  left: 30px;
+  bottom: 30px;
+  z-index: 2000;
+  background: none;
+  box-shadow: none;
+  pointer-events: none;
 }
 
 /* ==============================================

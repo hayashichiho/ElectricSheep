@@ -345,14 +345,14 @@ class BiometricMonitor {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('API返り値:', data);
-      
+
       if (typeof data.pulse_rate_bpm !== 'number') {
         throw new Error('Invalid pulse_rate_bpm format');
       }
-      
+
       return data.pulse_rate_bpm;
     } catch (error) {
       console.error('心拍数取得エラー:', error);
@@ -630,7 +630,7 @@ function startCountdown(targetDate) {
 
     const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
     const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-    timerElem.textContent = `起きる時間まであと ${minutes}:${seconds}`;
+    timerElem.textContent = `起きる時間まで${minutes}:${seconds}`;
   }
 
   updateTimer();
@@ -727,6 +727,12 @@ function setupVideoHandlers(monitor, config) {
       // DANGER期間外なら、クラスを削除して非表示にする
       dangerOverlay.classList.remove('visible', 'flashing');
     }
+
+    // 父からの通知
+    if (!state.messageShown && currentTime >= config.messageTime) {
+      createNotification("ログイン通知", "お父さんがこの夢にログインしました。", "1分前", "father.png");
+      state.messageShown = true;
+    }
   });
 
   function createNotification(title, message, timestamp = "今", iconUrl = null) {
@@ -757,8 +763,6 @@ function setupVideoHandlers(monitor, config) {
     }, 5000);
   }
 
-  // 例：ページ表示時に1件通知
-  createNotification("ログイン通知", "お父さんがこの夢にログインしました。", "1分前", "father.png");
 
   // シーク時の状態リセット
   video.addEventListener('seeked', () => {
@@ -820,25 +824,49 @@ function setupVideoHandlers(monitor, config) {
   });
 }
 
+// 動画の残り時間カウントダウン表示
+function startVideoCountdown(video) {
+  const timerElem = document.getElementById('countdown-timer');
+  if (!timerElem) return;
+
+  function updateTimer() {
+    if (video.duration && !isNaN(video.duration)) {
+      const remaining = Math.max(0, video.duration - video.currentTime);
+      const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const seconds = String(Math.floor(remaining % 60)).padStart(2, '0');
+      timerElem.textContent = `残り時間 ${minutes}:${seconds}`;
+    } else {
+      timerElem.textContent = '残り時間 --:--';
+    }
+  }
+
+  // 動画の再生位置が変わるたびに更新
+  video.addEventListener('timeupdate', updateTimer);
+  video.addEventListener('loadedmetadata', updateTimer);
+
+  // 初回表示
+  updateTimer();
+}
+
 // DOMコンテンツ読み込み完了時の処理
 document.addEventListener('DOMContentLoaded', () => {
   try {
     // バイオメトリックモニターの初期化
     window.biometricMonitor = new BiometricMonitor();
 
-    // カウントダウン開始（10分後）
-    const endTime = new Date(Date.now() + 10 * 60 * 1000);
-    startCountdown(endTime);
+    const video = document.getElementById('fixedVideo');
+    if (video) {
+      startVideoCountdown(video);
+    }
+
 
     // 設定
     const config = {
-      bigInhaleTime: 3,     // 大きな吸気の時間（秒）
-      bigExhaleTime: 25,    // 大きな呼気の時間（秒）
-
-      //ここでdangerの時間決める
-      dangerTime: 50,        // 危険時間（秒）
-      dangerDuration: 5,    // 危険時間の持続時間（秒）
-
+      bigInhaleTime: 56,     // 大きな吸気の時間（秒）
+      bigExhaleTime: 78,    // 大きな呼気の時間（秒）
+      messageTime: 36,       // 父からのメッセージ表示時間（秒）
+      dangerTime: 57,        // 危険時間（秒）
+      dangerDuration: 12,    // 危険時間の持続時間（秒）
       hpEvents: [
         // ここを動画に合わせて変える
         { time: 5, value: 40 },  // 5秒後にHPを40に
