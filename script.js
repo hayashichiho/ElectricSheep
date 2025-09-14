@@ -645,6 +645,8 @@ function startCountdown(targetDate) {
 function setupVideoHandlers(monitor, config) {
   const video = document.getElementById('fixedVideo');
 
+  const dangerOverlay = document.getElementById('danger-overlay'); // DANGER表示用の要素を取得
+
   if (!video) {
     console.warn('動画要素が見つかりません');
     return;
@@ -710,6 +712,18 @@ function setupVideoHandlers(monitor, config) {
     if (!state.bigExhaleTriggered && currentTime >= config.bigExhaleTime) {
       monitor.startBigExhale();
       state.bigExhaleTriggered = true;
+    }
+
+    //danger
+    const dangerEndTime = config.dangerTime + config.dangerDuration;
+
+    // 現在時刻がDANGER期間内かどうかを判定
+    if (currentTime >= config.dangerTime && currentTime < dangerEndTime) {
+      // DANGER期間内なら、表示と点滅用のクラスを追加
+      dangerOverlay.classList.add('visible', 'flashing');
+    } else {
+      // DANGER期間外なら、クラスを削除して非表示にする
+      dangerOverlay.classList.remove('visible', 'flashing');
     }
   });
 
@@ -818,8 +832,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const config = {
       bigInhaleTime: 3,     // 大きな吸気の時間（秒）
       bigExhaleTime: 25,    // 大きな呼気の時間（秒）
-      dangerTime: 2,        // 危険時間（秒）
-      dangerDuration: 2,    // 危険時間の持続時間（秒）
+
+      //ここでdangerの時間決める
+      dangerTime: 50,        // 危険時間（秒）
+      dangerDuration: 5,    // 危険時間の持続時間（秒）
+
       hpEvents: [
         // ここを動画に合わせて変える
         { time: 5, value: 40 },  // 5秒後にHPを40に
