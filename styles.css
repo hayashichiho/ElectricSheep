@@ -88,6 +88,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+     text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 /* 日付表示 */
@@ -198,6 +203,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+     text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 .maxTemperature {
