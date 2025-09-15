@@ -88,7 +88,7 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-     text-shadow:
+  text-shadow:
     -2px -2px 0 #fff,
     2px -2px 0 #fff,
     -2px 2px 0 #fff,
@@ -203,7 +203,7 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-     text-shadow:
+  text-shadow:
     -2px -2px 0 #fff,
     2px -2px 0 #fff,
     -2px 2px 0 #fff,
