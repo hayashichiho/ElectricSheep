@@ -105,6 +105,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 /* 場所表示 */
@@ -122,6 +127,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 /* ピンアイコン */
@@ -167,6 +177,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 .temperatureSymbol {
@@ -199,6 +214,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 .minTemperature {
@@ -215,6 +235,11 @@ video {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff;
 }
 
 /* ==============================================
