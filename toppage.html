@@ -2,18 +2,18 @@
 <html lang="ja">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>起床タイマー UI</title>
   <style>
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans JP', sans-serif;
       background: linear-gradient(135deg, #7b2ff7, #00c6ff);
-      display: flex;
       height: 100vh;
-      overflow: hidden;
+      display: flex;
       color: #222;
+      overflow: hidden;
     }
 
     /* サイドバー */
@@ -27,7 +27,7 @@
     }
 
     .sidebar h1 {
-      font-size: 14px;
+      font-size: 13px;
       margin-bottom: 30px;
     }
 
@@ -36,19 +36,13 @@
     }
 
     .menu-item {
-      margin: 14px 0;
-      font-size: 14px;
-      color: #888;
-      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .menu-item img {
-      width: 18px;
-      height: 18px;
-      object-fit: contain;
+      font-size: 14px;
+      color: #888;
+      margin: 12px 0;
+      cursor: pointer;
     }
 
     .menu-item.active {
@@ -63,7 +57,7 @@
       cursor: pointer;
     }
 
-    /* メインカード */
+    /* メインコンテンツ */
     .main {
       flex: 1;
       display: flex;
@@ -76,13 +70,13 @@
       background: #f5f5f7;
       border-radius: 28px;
       width: 100%;
-      max-width: 960px;
+      max-width: 1200px;
       height: 90%;
       display: flex;
       overflow: hidden;
     }
 
-    /* 左側コントロール */
+    /* 左カラム */
     .controls {
       flex: 2;
       padding: 30px;
@@ -128,12 +122,23 @@
       border-radius: 8px;
     }
 
+    .upload-icon {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 10px;
+    }
+
+    .upload-text {
+      color: #666;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
     .time-box .time {
       font-size: 28px;
       font-weight: bold;
     }
 
-    /* タイマー入力 */
     .time-input {
       margin-top: 10px;
     }
@@ -152,6 +157,28 @@
       color: #555;
     }
 
+    /* スライダー群 */
+    .sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .slider-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .slider-item label {
+      font-size: 13px;
+    }
+
+    .slider-item input[type=range] {
+      accent-color: #2563eb;
+    }
+
     /* スタートボタン */
     .start-btn {
       margin-top: auto;
@@ -165,13 +192,18 @@
       cursor: pointer;
     }
 
-    /* 右側ユーザーリスト */
+    /* 右カラム */
     .users {
       flex: 1;
       background: #eceef1;
       border-left: 1px solid #ddd;
       padding: 20px;
       overflow-y: auto;
+    }
+
+    .users h3 {
+      margin-top: 0;
+      font-size: 16px;
     }
 
     .user {
@@ -212,12 +244,12 @@
 
 <body>
   <aside class="sidebar">
-    <h1>このデバイスの<br>ゴとか名前</h1>
+    <h1>このデバイスの<br>ロゴか名前</h1>
     <nav class="menu">
-      <div class="menu-item active"><img src="dashboard.png" alt="dashboard">Dashboard</div>
-      <div class="menu-item"><img src="vital.png" alt="vital">Vital</div>
-      <div class="menu-item"><img src="chat.png" alt="chat">Chat</div>
-      <div class="menu-item"><img src="setting.png" alt="setting">Setting</div>
+      <div class="menu-item active">▦ dashboard</div>
+      <div class="menu-item">♡ vital</div>
+      <div class="menu-item">✉ chat</div>
+      <div class="menu-item">⚙ Setting</div>
     </nav>
     <div class="logout">⇦ log out</div>
   </aside>
@@ -226,14 +258,14 @@
     <div class="card">
       <section class="controls">
         <div class="upload-time">
-          <!-- 画像アップロード -->
           <div class="upload-box">
             <input id="fileInput" type="file" accept="image/*">
-            <label for="fileInput">📷 写真をアップロード</label>
+            <label for="fileInput">
+              <img src="upload.png" alt="Upload" class="upload-icon">
+              <div class="upload-text">Please upload a photo.</div>
+            </label>
             <img id="preview" alt="プレビュー画像" />
           </div>
-
-          <!-- タイマー -->
           <div class="time-box">
             <div>Good Morning time</div>
             <div class="time">⏰</div>
@@ -243,11 +275,35 @@
             <div class="status" id="status">まだタイマーはセットされていません。</div>
           </div>
         </div>
-
+        <div class="sliders">
+          <div class="slider-item">
+            <label>Danger Level</label>
+            <input type="range" min="0" max="100" value="50">
+          </div>
+          <div class="slider-item">
+            <label>Reality</label>
+            <input type="range" min="0" max="100" value="30">
+          </div>
+          <div class="slider-item">
+            <label>Pain Sensation</label>
+            <input type="range" min="0" max="100" value="90">
+          </div>
+          <div class="slider-item">
+            <label>Taste</label>
+            <input type="range" min="0" max="100" value="50">
+          </div>
+          <div class="slider-item">
+            <label>Sight</label>
+            <input type="range" min="0" max="100" value="80">
+          </div>
+          <div class="slider-item">
+            <label>Smell</label>
+            <input type="range" min="0" max="100" value="20">
+          </div>
+        </div>
         <button id="startBtn" class="start-btn">START</button>
       </section>
 
-      <!-- ユーザーリスト -->
       <aside class="users">
         <h3>Online User</h3>
         <div class="user">
@@ -258,54 +314,49 @@
             <div class="id">@amano reo</div>
           </div>
         </div>
+        <!-- ユーザーを複数並べる -->
+        <div class="user">
+          <img>
+          <div class="status-dot"></div>
+          <div class="user-info">
+            <div class="name">山田太郎</div>
+            <div class="id">@yamada taro</div>
+          </div>
+        </div>
       </aside>
     </div>
   </main>
 
   <script>
-    // --- アップロード処理 ---
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
-
     fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) {
-        alert('画像ファイルを選択してください');
-        return;
-      }
+      if (!file.type.startsWith('image/')) { alert('画像ファイルを選択してください'); return; }
       const url = URL.createObjectURL(file);
       preview.src = url;
       preview.style.display = 'block';
     });
-
-    // --- タイマー処理 ---
     const wakeTimeInput = document.getElementById('wakeTime');
     const startBtn = document.getElementById('startBtn');
     const status = document.getElementById('status');
     let alarmTimeout = null;
-
     function formatTimeHM(d) {
       const h = String(d.getHours()).padStart(2, '0');
       const m = String(d.getMinutes()).padStart(2, '0');
       return `${h}:${m}`;
     }
-
-    wakeTimeInput.addEventListener('input', () => { status.textContent = 'まだスタートされていません。' });
-
+    wakeTimeInput.addEventListener('input', () => { status.textContent = 'まだスタートされていません。'; });
     startBtn.addEventListener('click', () => {
       const timeValue = wakeTimeInput.value;
       if (!timeValue) { alert('起きる時間を選んでください。'); return; }
-
       const [hh, mm] = timeValue.split(':').map(x => parseInt(x, 10));
       const now = new Date();
       const target = new Date(now);
       target.setHours(hh, mm, 0, 0);
-      if (target <= now) {
-        target.setDate(target.getDate() + 1);
-      }
+      if (target <= now) { target.setDate(target.getDate() + 1); }
       const diff = target - now;
-
       if (alarmTimeout) clearTimeout(alarmTimeout);
       alarmTimeout = setTimeout(() => {
         try {
@@ -322,24 +373,11 @@
         status.textContent = 'アラームが鳴りました。';
         alarmTimeout = null;
       }, diff);
-
       status.textContent = `アラームセット済 — ${formatTimeHM(target)} に鳴ります（${Math.round(diff / 60000)}分後）`;
-
-      // ここでindex.htmlへ遷移
-      window.location.href = "index.html";
     });
-
-    // ページ離脱時に警告
-    window.addEventListener('beforeunload', e => {
-      if (alarmTimeout) { e.preventDefault(); e.returnValue = ''; }
-    });
-
-    // 現在時刻のリアルタイム表示
+    window.addEventListener('beforeunload', e => { if (alarmTimeout) { e.preventDefault(); e.returnValue = ''; } });
     const timeDisplay = document.querySelector('.time-box .time');
-    setInterval(() => {
-      const now = new Date();
-      timeDisplay.textContent = formatTimeHM(now);
-    }, 1000);
+    setInterval(() => { const now = new Date(); timeDisplay.textContent = formatTimeHM(now); }, 1000);
   </script>
 </body>
 
