@@ -307,7 +307,7 @@
       <aside class="users">
         <h3>Online User</h3>
         <div class="user">
-          <img>
+          <img src="user1.png" alt="User 1">
           <div class="status-dot"></div>
           <div class="user-info">
             <div class="name">天野励音</div>
@@ -316,7 +316,7 @@
         </div>
         <!-- ユーザーを複数並べる -->
         <div class="user">
-          <img>
+          <img src="user2.png" alt="User 2">
           <div class="status-dot"></div>
           <div class="user-info">
             <div class="name">山田太郎</div>
@@ -333,7 +333,6 @@
     fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) { alert('画像ファイルを選択してください'); return; }
       const url = URL.createObjectURL(file);
       preview.src = url;
       preview.style.display = 'block';
@@ -350,7 +349,6 @@
     wakeTimeInput.addEventListener('input', () => { status.textContent = 'まだスタートされていません。'; });
     startBtn.addEventListener('click', () => {
       const timeValue = wakeTimeInput.value;
-      if (!timeValue) { alert('起きる時間を選んでください。'); return; }
       const [hh, mm] = timeValue.split(':').map(x => parseInt(x, 10));
       const now = new Date();
       const target = new Date(now);
@@ -369,11 +367,12 @@
           o.start();
           setTimeout(() => { o.stop(); ctx.close(); }, 1500);
         } catch (e) { }
-        alert('設定した時間になりました！');
         status.textContent = 'アラームが鳴りました。';
         alarmTimeout = null;
       }, diff);
       status.textContent = `アラームセット済 — ${formatTimeHM(target)} に鳴ります（${Math.round(diff / 60000)}分後）`;
+
+      window.location.href = "index.html";
     });
     window.addEventListener('beforeunload', e => { if (alarmTimeout) { e.preventDefault(); e.returnValue = ''; } });
     const timeDisplay = document.querySelector('.time-box .time');
