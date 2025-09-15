@@ -488,7 +488,7 @@ class BiometricMonitor {
     const heartRateElem = document.getElementById('currentHeartRate');
     const breathingElem = document.getElementById('currentBreathing');
 
-    if (heartRateElem) heartRateElem.textContent = data.heartRate;
+    if (heartRateElem) heartRateElem.textContent = date;
     if (breathingElem) breathingElem.textContent = data.breathingRate;
   }
 

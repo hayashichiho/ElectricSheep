@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="ja">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>起床タイマー UI</title>
   <style>
     body {
@@ -24,13 +25,16 @@
       padding: 20px;
       box-sizing: border-box;
     }
+
     .sidebar h1 {
       font-size: 14px;
       margin-bottom: 30px;
     }
+
     .menu {
       flex: 1;
     }
+
     .menu-item {
       margin: 14px 0;
       font-size: 14px;
@@ -40,15 +44,18 @@
       align-items: center;
       gap: 8px;
     }
+
     .menu-item img {
       width: 18px;
       height: 18px;
       object-fit: contain;
     }
+
     .menu-item.active {
       color: #2563eb;
       font-weight: 600;
     }
+
     .logout {
       margin-top: auto;
       font-size: 13px;
@@ -64,6 +71,7 @@
       align-items: center;
       padding: 20px;
     }
+
     .card {
       background: #f5f5f7;
       border-radius: 28px;
@@ -82,11 +90,14 @@
       flex-direction: column;
       gap: 20px;
     }
+
     .upload-time {
       display: flex;
       gap: 20px;
     }
-    .upload-box, .time-box {
+
+    .upload-box,
+    .time-box {
       flex: 1;
       background: #fff;
       border-radius: 14px;
@@ -96,14 +107,19 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
-    .upload-box input { display: none; }
+
+    .upload-box input {
+      display: none;
+    }
+
     .upload-box label {
       cursor: pointer;
       color: #666;
       font-size: 14px;
     }
+
     .upload-box img {
       max-width: 100%;
       max-height: 120px;
@@ -111,6 +127,7 @@
       display: none;
       border-radius: 8px;
     }
+
     .time-box .time {
       font-size: 28px;
       font-weight: bold;
@@ -120,6 +137,7 @@
     .time-input {
       margin-top: 10px;
     }
+
     .time-input input {
       appearance: none;
       border: 1px solid #ccc;
@@ -127,6 +145,7 @@
       padding: 6px 10px;
       font-size: 16px;
     }
+
     .status {
       margin-top: 8px;
       font-size: 13px;
@@ -154,31 +173,43 @@
       padding: 20px;
       overflow-y: auto;
     }
+
     .user {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 14px;
     }
+
     .user img {
       width: 36px;
       height: 36px;
       border-radius: 50%;
       background: #bbb;
     }
+
     .status-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background: #22c55e;
     }
+
     .user-info {
       font-size: 13px;
     }
-    .user-info .name { font-weight: 600; }
-    .user-info .id { color: #777; font-size: 12px; }
+
+    .user-info .name {
+      font-weight: 600;
+    }
+
+    .user-info .id {
+      color: #777;
+      font-size: 12px;
+    }
   </style>
 </head>
+
 <body>
   <aside class="sidebar">
     <h1>このデバイスの<br>ゴとか名前</h1>
@@ -254,30 +285,30 @@
     const status = document.getElementById('status');
     let alarmTimeout = null;
 
-    function formatTimeHM(d){
-      const h = String(d.getHours()).padStart(2,'0');
-      const m = String(d.getMinutes()).padStart(2,'0');
+    function formatTimeHM(d) {
+      const h = String(d.getHours()).padStart(2, '0');
+      const m = String(d.getMinutes()).padStart(2, '0');
       return `${h}:${m}`;
     }
 
-    wakeTimeInput.addEventListener('input', ()=>{ status.textContent='まだスタートされていません。' });
+    wakeTimeInput.addEventListener('input', () => { status.textContent = 'まだスタートされていません。' });
 
-    startBtn.addEventListener('click', ()=>{
+    startBtn.addEventListener('click', () => {
       const timeValue = wakeTimeInput.value;
-      if(!timeValue){ alert('起きる時間を選んでください。'); return; }
+      if (!timeValue) { alert('起きる時間を選んでください。'); return; }
 
-      const [hh, mm] = timeValue.split(':').map(x=>parseInt(x,10));
+      const [hh, mm] = timeValue.split(':').map(x => parseInt(x, 10));
       const now = new Date();
       const target = new Date(now);
       target.setHours(hh, mm, 0, 0);
-      if(target <= now){
-        target.setDate(target.getDate()+1);
+      if (target <= now) {
+        target.setDate(target.getDate() + 1);
       }
       const diff = target - now;
 
-      if(alarmTimeout) clearTimeout(alarmTimeout);
-      alarmTimeout = setTimeout(()=>{
-        try{
+      if (alarmTimeout) clearTimeout(alarmTimeout);
+      alarmTimeout = setTimeout(() => {
+        try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();
           const o = ctx.createOscillator();
           const g = ctx.createGain();
@@ -285,27 +316,31 @@
           g.gain.value = 0.0025;
           o.connect(g); g.connect(ctx.destination);
           o.start();
-          setTimeout(()=>{o.stop(); ctx.close();},1500);
-        }catch(e){}
+          setTimeout(() => { o.stop(); ctx.close(); }, 1500);
+        } catch (e) { }
         alert('設定した時間になりました！');
         status.textContent = 'アラームが鳴りました。';
         alarmTimeout = null;
       }, diff);
 
-      status.textContent = `アラームセット済 — ${formatTimeHM(target)} に鳴ります（${Math.round(diff/60000)}分後）`;
+      status.textContent = `アラームセット済 — ${formatTimeHM(target)} に鳴ります（${Math.round(diff / 60000)}分後）`;
+
+      // ここでindex.htmlへ遷移
+      window.location.href = "index.html";
     });
 
     // ページ離脱時に警告
     window.addEventListener('beforeunload', e => {
-      if(alarmTimeout){ e.preventDefault(); e.returnValue = ''; }
+      if (alarmTimeout) { e.preventDefault(); e.returnValue = ''; }
     });
 
     // 現在時刻のリアルタイム表示
     const timeDisplay = document.querySelector('.time-box .time');
-    setInterval(()=>{
+    setInterval(() => {
       const now = new Date();
       timeDisplay.textContent = formatTimeHM(now);
     }, 1000);
   </script>
 </body>
+
 </html>

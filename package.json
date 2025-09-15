@@ -2,10 +2,10 @@
   "name": "biometric-video-monitor",
   "version": "1.0.0",
   "description": "動画とバイオメトリクス（心拍数・呼吸数）のリアルタイム監視システム",
-  "main": "index.html",
+  "main": "toppage.html",
   "scripts": {
-    "start": "live-server --port=3000 --open=/index.html",
-    "dev": "live-server --port=3000 --open=/index.html --watch=.",
+    "start": "live-server --port=3000 --open=/toppage.html",
+    "dev": "live-server --port=3000 --open=/toppage.html --watch=.",
     "build": "echo 'ビルド処理はありません（純粋なクライアントサイドアプリ）'",
     "serve": "python3 -m http.server 8000",
     "serve-python": "python -m http.server 8000"
